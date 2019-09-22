@@ -1,3 +1,3 @@
 class Api::V1::TaskSerializer < ActiveModel::Serializer
-  attributes :id, :title
+  attributes :id, :title, :completed
 end

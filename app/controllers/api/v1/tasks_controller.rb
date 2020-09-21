@@ -1,6 +1,6 @@
 class Api::V1::TasksController < ApiController
   def index
-    tasks = Task.all
+    tasks = Task.rank(:row_order).all
     render json: {
       success: true,
       data: ActiveModel::Serializer::CollectionSerializer.new(tasks, serializer: Api::V1::TaskSerializer)
@@ -29,8 +29,8 @@ class Api::V1::TasksController < ApiController
 
   def update
     task = Task.find params[:id]
-    task.update_attributes! task_params
 
+    task.update_attributes! task_params
     ActionCable.server.broadcast('tasks_channel',
       {type: 'update', task: Api::V1::TaskSerializer.new(task)})
 
@@ -55,6 +55,6 @@ class Api::V1::TasksController < ApiController
 
   private
   def task_params
-    params.permit [:title, :completed]
+    params.permit [:title, :completed, :row_order_position]
   end
 end
